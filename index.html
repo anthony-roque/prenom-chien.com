@@ -18,6 +18,50 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='20' font-size='20'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="assets/css/style.css">
 
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3139528902031304"
+     crossorigin="anonymous"></script>
+
+  <!-- Consent Mode v2 — defaults AVANT chargement GA -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'denied',
+      personalization_storage: 'denied',
+      security_storage: 'granted',
+      wait_for_update: 500
+    });
+
+    try {
+      var m = document.cookie.match(/(?:^|;\s*)pc_consent=([^;]+)/);
+      if (m) {
+        var c = JSON.parse(decodeURIComponent(m[1]));
+        if (c && c.version === 1) {
+          var g = c.analytics ? 'granted' : 'denied';
+          gtag('consent', 'update', {
+            analytics_storage: g,
+            functionality_storage: g,
+            personalization_storage: g
+          });
+        }
+      }
+    } catch (e) {}
+  </script>
+
+  <!-- Google Analytics (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0EL935R9VT"></script>
+  <script>
+    gtag('js', new Date());
+    gtag('config', 'G-0EL935R9VT');
+  </script>
+
   <!-- ================= Google AdSense =================
        Quand ton compte AdSense sera validé, décommente ce bloc et
        remplace ca-pub-XXXXXXXXXXXXXXXX par ton ID éditeur :
@@ -190,8 +234,233 @@
 
   <footer class="site-footer">
     <p>prénom-chien.com — générateur gratuit de prénoms pour chien.</p>
-    <p><a href="/embed.html">Version intégrable</a></p>
+    <p><a href="/embed.html">Version intégrable</a> · <a href="#" data-pc-consent-open>Gérer mes cookies</a></p>
   </footer>
+
+  <!-- Bannière de consentement cookies -->
+  <div id="pc-consent-root" class="pc-consent-root" hidden aria-hidden="true">
+    <div class="pc-consent-overlay"></div>
+    <div class="pc-consent-modal" role="dialog" aria-modal="true" aria-labelledby="pc-consent-title" aria-describedby="pc-consent-desc" tabindex="-1">
+      <section class="pc-consent-view" data-view="main">
+        <h2 id="pc-consent-title" class="pc-consent-title">Vos cookies, votre choix</h2>
+        <p id="pc-consent-desc" class="pc-consent-desc">
+          Pour faire vivre ce site, on utilise quelques cookies. Les cookies
+          nécessaires sont indispensables au bon fonctionnement de la page.
+          Les cookies de mesure d'audience (Google Analytics) nous aident à
+          comprendre comment vous utilisez le site afin d'améliorer votre
+          expérience. Vous gardez la main à tout moment.
+        </p>
+        <div class="pc-consent-actions">
+          <button type="button" class="pc-btn pc-btn-primary" data-action="accept-all">Tout accepter</button>
+          <button type="button" class="pc-btn pc-btn-outline" data-action="customize">Personnaliser</button>
+        </div>
+        <button type="button" class="pc-consent-reject" data-action="reject-all">Tout refuser</button>
+      </section>
+
+      <section class="pc-consent-view" data-view="prefs" hidden>
+        <h2 class="pc-consent-title">Vos préférences cookies</h2>
+        <p class="pc-consent-desc">Activez uniquement ce avec quoi vous êtes à l'aise.</p>
+        <ul class="pc-consent-cats">
+          <li class="pc-consent-cat">
+            <div class="pc-consent-cat-head">
+              <span class="pc-consent-cat-name">Cookies nécessaires</span>
+              <span class="pc-consent-toggle pc-consent-toggle--locked" aria-hidden="true">
+                <span class="pc-consent-toggle-knob"></span>
+              </span>
+              <span class="pc-consent-cat-state">Toujours actifs</span>
+            </div>
+            <p class="pc-consent-cat-desc">Indispensables au fonctionnement du site (préférences techniques, mémorisation de votre choix de cookies). Ils ne peuvent pas être désactivés.</p>
+          </li>
+          <li class="pc-consent-cat">
+            <div class="pc-consent-cat-head">
+              <label class="pc-consent-cat-name" for="pc-toggle-analytics">Mesure d'audience</label>
+              <button type="button" id="pc-toggle-analytics" class="pc-consent-toggle" role="switch" aria-checked="false" data-toggle="analytics">
+                <span class="pc-consent-toggle-knob"></span>
+                <span class="pc-sr-only">Activer la mesure d'audience</span>
+              </button>
+            </div>
+            <p class="pc-consent-cat-desc">Google Analytics : statistiques anonymisées de fréquentation pour comprendre l'usage du site et l'améliorer.</p>
+          </li>
+        </ul>
+        <div class="pc-consent-actions pc-consent-actions--prefs">
+          <button type="button" class="pc-btn pc-btn-outline" data-action="save">Enregistrer mes choix</button>
+          <button type="button" class="pc-btn pc-btn-primary" data-action="accept-all">Tout accepter</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var CONSENT_VERSION = 1;
+    var COOKIE_NAME = 'pc_consent';
+    var COOKIE_MAX_AGE = 60 * 60 * 24 * 400;
+
+    function isSecure() { return location.protocol === 'https:'; }
+
+    function readConsent() {
+      var m = document.cookie.match(/(?:^|;\s*)pc_consent=([^;]+)/);
+      if (!m) return null;
+      try {
+        var c = JSON.parse(decodeURIComponent(m[1]));
+        if (!c || c.version !== CONSENT_VERSION) return null;
+        return c;
+      } catch (e) { return null; }
+    }
+
+    function writeConsent(choices) {
+      var payload = { analytics: !!choices.analytics, timestamp: new Date().toISOString(), version: CONSENT_VERSION };
+      var value = encodeURIComponent(JSON.stringify(payload));
+      var parts = [COOKIE_NAME + '=' + value, 'Max-Age=' + COOKIE_MAX_AGE, 'Path=/', 'SameSite=Lax'];
+      if (isSecure()) parts.push('Secure');
+      document.cookie = parts.join('; ');
+      return payload;
+    }
+
+    function deleteAnalyticsCookies() {
+      var hostname = location.hostname;
+      var domains = ['', hostname, '.' + hostname];
+      var hparts = hostname.split('.');
+      if (hparts.length > 2) {
+        var root = hparts.slice(-2).join('.');
+        domains.push(root, '.' + root);
+      }
+      var all = document.cookie ? document.cookie.split(';') : [];
+      for (var i = 0; i < all.length; i++) {
+        var name = all[i].split('=')[0].trim();
+        if (!name) continue;
+        if (name === '_ga' || /^_ga_/.test(name) || name === '_gid' || /^_gat/.test(name)) {
+          for (var j = 0; j < domains.length; j++) {
+            var d = domains[j];
+            var base = name + '=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/';
+            document.cookie = d ? base + '; Domain=' + d : base;
+          }
+        }
+      }
+    }
+
+    function gtagUpdate(analyticsGranted) {
+      if (typeof window.gtag === 'function') {
+        var g = analyticsGranted ? 'granted' : 'denied';
+        window.gtag('consent', 'update', { analytics_storage: g, functionality_storage: g, personalization_storage: g });
+      }
+    }
+
+    var root = document.getElementById('pc-consent-root');
+    if (!root) return;
+    var modal = root.querySelector('.pc-consent-modal');
+    var viewMain = root.querySelector('[data-view="main"]');
+    var viewPrefs = root.querySelector('[data-view="prefs"]');
+    var toggleAnalytics = root.querySelector('[data-toggle="analytics"]');
+    var lastFocus = null;
+
+    function setView(name) {
+      if (name === 'prefs') { viewMain.hidden = true; viewPrefs.hidden = false; }
+      else { viewMain.hidden = false; viewPrefs.hidden = true; }
+    }
+
+    function syncToggleFromStored() {
+      var c = readConsent();
+      var analytics = c ? !!c.analytics : false;
+      toggleAnalytics.setAttribute('aria-checked', analytics ? 'true' : 'false');
+    }
+
+    function openModal(opts) {
+      opts = opts || {};
+      lastFocus = document.activeElement;
+      syncToggleFromStored();
+      setView(opts.view === 'prefs' ? 'prefs' : 'main');
+      root.hidden = false;
+      root.setAttribute('aria-hidden', 'false');
+      document.documentElement.style.overflow = 'hidden';
+      setTimeout(function () {
+        var firstBtn = (opts.view === 'prefs' ? viewPrefs : viewMain).querySelector('.pc-btn, .pc-consent-toggle');
+        if (firstBtn) firstBtn.focus();
+        else modal.focus();
+      }, 0);
+    }
+
+    function closeModal() {
+      root.hidden = true;
+      root.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+      if (lastFocus && typeof lastFocus.focus === 'function') {
+        try { lastFocus.focus(); } catch (e) {}
+      }
+    }
+
+    function applyChoices(choices) {
+      var prev = readConsent();
+      var saved = writeConsent(choices);
+      gtagUpdate(saved.analytics);
+      if (!saved.analytics) deleteAnalyticsCookies();
+    }
+
+    root.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      var action = btn.getAttribute('data-action');
+      if (action === 'accept-all') { applyChoices({ analytics: true }); closeModal(); }
+      else if (action === 'reject-all') { applyChoices({ analytics: false }); closeModal(); }
+      else if (action === 'customize') {
+        setView('prefs');
+        var first = viewPrefs.querySelector('.pc-consent-toggle:not(.pc-consent-toggle--locked)');
+        if (first) first.focus();
+      }
+      else if (action === 'save') {
+        var analytics = toggleAnalytics.getAttribute('aria-checked') === 'true';
+        applyChoices({ analytics: analytics });
+        closeModal();
+      }
+    });
+
+    if (toggleAnalytics) {
+      toggleAnalytics.addEventListener('click', function () {
+        var cur = toggleAnalytics.getAttribute('aria-checked') === 'true';
+        toggleAnalytics.setAttribute('aria-checked', cur ? 'false' : 'true');
+      });
+      toggleAnalytics.addEventListener('keydown', function (e) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleAnalytics.click(); }
+      });
+    }
+
+    modal.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); return; }
+      if (e.key !== 'Tab') return;
+      var focusables = Array.prototype.filter.call(
+        modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])'),
+        function (el) { return !el.hidden && el.offsetParent !== null && !el.disabled; }
+      );
+      if (!focusables.length) return;
+      var first = focusables[0];
+      var last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
+    window.PcConsent = {
+      open: function () { openModal({ view: 'main' }); },
+      openPrefs: function () { openModal({ view: 'prefs' }); },
+      get: function () { return readConsent(); },
+      set: function (choices) { applyChoices(choices || { analytics: false }); }
+    };
+
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-pc-consent-open]');
+      if (t) { e.preventDefault(); window.PcConsent.open(); }
+    });
+
+    var stored = readConsent();
+    if (stored) {
+      gtagUpdate(stored.analytics);
+      if (!stored.analytics) deleteAnalyticsCookies();
+    } else {
+      setTimeout(function () {
+        if (!readConsent()) openModal({ view: 'main' });
+      }, 3000);
+    }
+  })();
+  </script>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>

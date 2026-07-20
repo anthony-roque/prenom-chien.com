@@ -142,6 +142,14 @@
     // on tire jusqu'à COUNT prénoms distincts au hasard
     var picks = shuffle(pool).slice(0, Math.min(COUNT, pool.length));
     showNames(picks);
+
+    if (typeof gtag === "function") {
+      gtag("event", "name_generation", {
+        sex: currentSex,
+        theme: themeSel ? themeSel.value || "all" : "all",
+        letter: letterSel ? letterSel.value || "all" : "all"
+      });
+    }
   }
 
   genBtn.addEventListener("click", generate);
